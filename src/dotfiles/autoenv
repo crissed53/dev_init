@@ -1,0 +1,71 @@
+source ~/.dotfiles/lib/zsh-autoenv/autoenv.zsh
+export AUTOENV_FILE_ENTER=.autoenv.zsh
+export AUTOENV_FILE_LEAVE=.autoenv.zsh
+export AUTOENV_HANDLE_LEAVE=1
+# Environment file for all projects.
+#  - (de)activates Python virtualenvs (.venv) from pipenv
+# UV venv wrapper function - creates virtualenv and autoenv file
+uv() {
+    if [[ "$1" == "venv" ]]; then
+        # Check if uv command exists
+        if ! command -v uv &> /dev/null; then
+            echo "Warning: 'uv' command not found"
+            return 1
+        fi
+        # Check if .venv directory already exists
+        if [[ -d ".venv" ]]; then
+            echo ".venv directory already exists"
+            return 0
+        fi
+        # Create virtual environment using original uv command
+        command uv venv
+        # Create .autoenv.zsh file with proper escaping
+        cat > .autoenv.zsh << 'ENDOFAUTOENV'
+# Environment file for all projects.
+#  - (de)activates Python virtualenvs (.venv) from pipenv
+if [[ $autoenv_event == "enter" ]]; then
+    autoenv_source_parent
+    *my*autoenv_venv_chpwd() {
+        if [[ -z "$_ZSH_ACTIVATED_VIRTUALENV" && -n "$VIRTUAL_ENV" ]]; then
+            return
+        fi
+        setopt localoptions extendedglob
+        local -a venv
+        venv=(./(../)#.venv(NY1:A))
+        if [[ -n "$_ZSH_ACTIVATED_VIRTUALENV" && -n "$VIRTUAL_ENV" ]]; then
+            if ! (( $#venv )) || [[ "$_ZSH_ACTIVATED_VIRTUALENV" != "$venv[1]" ]]; then
+                unset *ZSH*ACTIVATED_VIRTUALENV
+                echo "De-activating virtualenv: ${(D)VIRTUAL_ENV}" >&2
+                # Simulate "deactivate", but handle $PATH better (remove VIRTUAL_ENV).
+                if ! autoenv_remove_path $VIRTUAL_ENV/bin; then
+                    echo "warning: ${VIRTUAL_ENV}/bin not found in \$PATH" >&2
+                fi
+                # NOTE: does not handle PYTHONHOME/_OLD_VIRTUAL_PYTHONHOME
+                unset *OLD*VIRTUAL_PYTHONHOME
+                # NOTE: does not handle PS1/_OLD_VIRTUAL_PS1
+                unset *OLD*VIRTUAL_PS1
+                unset VIRTUAL_ENV
+            fi
+        fi
+        if [[ -z "$VIRTUAL_ENV" ]]; then
+            if (( $#venv )); then
+                echo "Activating virtualenv: ${(D)venv}" >&2
+                export VIRTUAL_ENV=$venv[1]
+                autoenv_prepend_path $VIRTUAL_ENV/bin
+                *ZSH*ACTIVATED_VIRTUALENV="$venv[1]"
+            fi
+        fi
+    }
+    autoload -U add-zsh-hook
+    add-zsh-hook chpwd *my*autoenv_venv_chpwd
+    *my*autoenv_venv_chpwd
+else
+    add-zsh-hook -d chpwd *my*autoenv_venv_chpwd
+fi
+ENDOFAUTOENV
+        echo "Virtual environment created and .autoenv.zsh file generated"
+        source ~/.zshrc
+    else
+        command uv "$@"
+    fi
+}
