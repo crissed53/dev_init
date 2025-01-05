@@ -145,6 +145,7 @@ install_langs() {
 install_plugins() {
   zsh <<'EOF'
 source ~/.zshrc
+source ./utils.sh
 # intsall fzf
 if [ -d ~/.fzf ]; then
   rm -rf ~/.fzf
