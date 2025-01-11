@@ -36,6 +36,7 @@ set_zsh_alias() {
   add_if_not_exists 'export PATH='"$LOCAL_DIR"/bin':$PATH' ~/.zshrc
   add_if_not_exists 'export MANPATH='"$LOCAL_DIR"/share/man:'$MANPATH' ~/.zshrc
   add_if_not_exists 'export SHELL=$(which zsh)' ~/.zshrc
+  add_if_not_exists 'set -g mode-keys vi' ~/.zshrc
 }
 
 install_tmuxrc() {
