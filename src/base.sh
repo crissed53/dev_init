@@ -169,20 +169,20 @@ main() {
   set -exu
   mkdir -p "$WORKSPACE_DIR"
 
-  #echo "installing tmux..."
-  #install_tmux
+  echo "installing tmux..."
+  install_tmux
 
-  #echo "install zsh..."
-  #install_zsh
+  echo "install zsh..."
+  install_zsh
 
-  #echo "setting up zsh aliases... and rcs"
-  #set_zsh_alias
+  echo "setting up zsh aliases... and rcs"
+  set_zsh_alias
 
-  #echo "setting up pure"
-  #install_pure
+  echo "setting up pure"
+  install_pure
 
-  #echo "install uv and autoenv"
-  #install_zsh_uv_and_autoenv
+  echo "install uv and autoenv"
+  install_zsh_uv_and_autoenv
 
   echo "install nvim"
   install_nvim
