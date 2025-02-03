@@ -107,7 +107,7 @@ install_nvim_dotfile() {
   if [ -d "$NVIM_CONFIG_DIR" ]; then
     rm -rf "$NVIM_CONFIG_DIR"
   fi
-  git clone https://github.com/crissed53/lazyvim.dotfile.git ~/.config/nvim
+  git clone https://github.com/crissed53/lazyvim.dotfile.git -b raw ~/.config/nvim
 
   zsh -c "source ~/.zshrc && nvim --headless '+Lazy install' +MasonInstallAll +qall"
 }
