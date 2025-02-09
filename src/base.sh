@@ -115,11 +115,11 @@ install_nvim_dotfile() {
 
 install_nvim() {
   pushd $WORKSPACE_DIR || exit
-  APP_IMG=nvim.appimage
+  APP_IMG=nvim-linux-arm64.appimage
   if [ -d $APP_IMG ]; then
     rm $APP_IMG
   fi
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/$APP_IMG
+  curl -LO https://github.com/neovim/neovim/releases/download/v0.10.4/$APP_IMG
   chmod u+x $APP_IMG
   ./$APP_IMG --appimage-extract
   cp -rf squashfs-root "$LOCAL_DIR"/
