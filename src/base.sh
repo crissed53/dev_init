@@ -5,7 +5,7 @@ DOTFILES=$PROJECT_DIR/dotfiles
 
 source utils.sh
 
-source env.sh
+source ../env.sh
 
 if [ -d $WORKSPACE_DIR ]; then
   rm $WORKSPACE_DIR
@@ -170,10 +170,9 @@ install_langs() {
   
   add_if_not_exists 'source $HOME/.cargo/env' ~/.zshrc
 
-
   # install go
   GO_VER=${GO_VER:-"1.23.4"}
-  GO_TAR_FN=go${GO_VER}.linux-${ARCH}.tar.gz
+  GO_TAR_FN=go${GO_VER}.linux-amd64.tar.gz
   wget https://go.dev/dl/${GO_TAR_FN} && tar -C $LOCAL_DIR -xzf ${GO_TAR_FN}
   add_if_not_exists 'export PATH=$PATH:'"$LOCAL_DIR"/go/bin ~/.zshrc
   popd
