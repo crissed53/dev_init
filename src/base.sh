@@ -114,8 +114,19 @@ install_nvim_dotfile() {
 }
 
 install_nvim() {
+  # Check the architecture and set the ARCH variable.
+  if [[ "$machine_arch" == "aarch64" ]]; then
+    ARCH="arm64"
+  elif [[ "$machine_arch" == "x86_64" ]]; then
+    ARCH="x86_64"
+  else
+    # Handle other architectures or unknown cases.
+    ARCH="unknown"
+    echo "Warning: Unknown architecture detected: $machine_arch" >&2  # Output to stderr
+  fi
+
   pushd $WORKSPACE_DIR || exit
-  APP_IMG=nvim-linux-arm64.appimage
+  APP_IMG=nvim-linux-${ARCH}.appimage
   if [ -d $APP_IMG ]; then
     rm $APP_IMG
   fi
