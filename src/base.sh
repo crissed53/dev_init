@@ -8,6 +8,7 @@ source utils.sh
 source env.sh
 
 # Check the architecture and set the ARCH variable.
+machine_arch=$(uname -m)
 if [[ "$machine_arch" == "aarch64" ]]; then
   ARCH="arm64"
 elif [[ "$machine_arch" == "x86_64" ]]; then
@@ -16,6 +17,7 @@ else
   # Handle other architectures or unknown cases.
   ARCH="unknown"
   echo "Warning: Unknown architecture detected: $machine_arch" >&2  # Output to stderr
+  exit 1
 fi
 
 install_zsh() {
@@ -138,8 +140,6 @@ install_nvim_dotfile() {
 }
 
 install_nvim() {
-
-
   pushd $WORKSPACE_DIR || exit
   APP_IMG=nvim-linux-${ARCH}.appimage
   if [ -d $APP_IMG ]; then
