@@ -5,6 +5,19 @@ DOTFILES=$PROJECT_DIR/dotfiles
 
 source utils.sh
 
+source env.sh
+
+# Check the architecture and set the ARCH variable.
+if [[ "$machine_arch" == "aarch64" ]]; then
+  ARCH="arm64"
+elif [[ "$machine_arch" == "x86_64" ]]; then
+  ARCH="x86_64"
+else
+  # Handle other architectures or unknown cases.
+  ARCH="unknown"
+  echo "Warning: Unknown architecture detected: $machine_arch" >&2  # Output to stderr
+fi
+
 install_zsh() {
   OMZ_DIR="$HOME/.oh-my-zsh"
 
@@ -71,8 +84,19 @@ install_pure() {
 install_tmux() {
   install_tmux_prerequisites
 
+  TMUX_VER=${TMUX_VER:-"3.5a"}
+
   pushd $WORKSPACE_DIR
-  wget https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz
+  if [ -d ~/.zsh/pure ]; then
+    rm -rf ~/.zsh/pure
+  fi
+
+  TMUX_FILE=tmux-${TMUX_VER}.tar.gz
+  if [ -f "$TMUX_FILE" ]; then
+    rm "$TMUX_FILE"
+  fi
+  
+  wget https://github.com/tmux/tmux/releases/download/${TMUX_VER}/tmux-${TMUX_VER}.tar.gz
   tar -zxf tmux-*.tar.gz
   pushd tmux-*/ || exit
   ./configure --prefix ${LOCAL_DIR}
@@ -114,23 +138,15 @@ install_nvim_dotfile() {
 }
 
 install_nvim() {
-  # Check the architecture and set the ARCH variable.
-  if [[ "$machine_arch" == "aarch64" ]]; then
-    ARCH="arm64"
-  elif [[ "$machine_arch" == "x86_64" ]]; then
-    ARCH="x86_64"
-  else
-    # Handle other architectures or unknown cases.
-    ARCH="unknown"
-    echo "Warning: Unknown architecture detected: $machine_arch" >&2  # Output to stderr
-  fi
+
 
   pushd $WORKSPACE_DIR || exit
   APP_IMG=nvim-linux-${ARCH}.appimage
   if [ -d $APP_IMG ]; then
     rm $APP_IMG
   fi
-  curl -LO https://github.com/neovim/neovim/releases/download/v0.10.4/$APP_IMG
+  NVIM_VER=${NVIM_VER:-"v0.10.4"}
+  curl -LO https://github.com/neovim/neovim/releases/download/$NVIM_VER/$APP_IMG
   chmod u+x $APP_IMG
   ./$APP_IMG --appimage-extract
   cp -rf squashfs-root "$LOCAL_DIR"/
@@ -142,14 +158,18 @@ install_nvim() {
 install_langs() {
   # install node
   pushd $WORKSPACE_DIR
-  curl -sfLS https://install-node.vercel.app | bash -s -- 20 -y --prefix=/usr
+  NODE_VER=${NODE_VER:-"20"}
+  curl -sfLS https://install-node.vercel.app | bash -s -- ${NODE_VER} -y --prefix=/usr
 
   # install rust
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   add_if_not_exists 'source $HOME/.cargo/env' ~/.zshrc
 
+
   # install go
-  wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz && tar -C $LOCAL_DIR -xzf go1.23.4.linux-amd64.tar.gz
+  GO_VER=${GO_VER:-"1.23.4"}
+  GO_TAR_FN=go${GO_VER}.linux-${ARCH}.tar.gz
+  wget https://go.dev/dl/${GO_TAR_FN} && tar -C $LOCAL_DIR -xzf ${GO_TAR_FN}
   add_if_not_exists 'export PATH=$PATH:'"$LOCAL_DIR"/go/bin ~/.zshrc
   popd
 }
