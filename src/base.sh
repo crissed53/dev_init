@@ -7,6 +7,10 @@ source utils.sh
 
 source env.sh
 
+if [ -d $WORKSPACE_DIR ]; then
+  rm $WORKSPACE_DIR
+fi
+
 # Check the architecture and set the ARCH variable.
 machine_arch=$(uname -m)
 if [[ "$machine_arch" == "aarch64" ]]; then
