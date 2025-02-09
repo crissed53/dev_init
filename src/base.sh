@@ -163,10 +163,11 @@ install_langs() {
   # install node
   pushd $WORKSPACE_DIR
   NODE_VER=${NODE_VER:-"20"}
-  curl -sfLS https://install-node.vercel.app | bash -s -- ${NODE_VER} -y --prefix=/usr
+  curl -sfLS https://install-node.vercel.app/lts | bash -s -- -y --prefix $HOME/local
 
   # install rust
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  
   add_if_not_exists 'source $HOME/.cargo/env' ~/.zshrc
 
 
