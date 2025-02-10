@@ -45,6 +45,8 @@ install_zsh() {
     -p https://github.com/zsh-users/zsh-syntax-highlighting
 }
 
+chsh -s $(which zsh)
+
 set_zsh_alias() {
   add_if_not_exists 'export TZ="Asia/Seoul"' ~/.zshrc
   add_if_not_exists 'alias gauca="git add -u; git commit --amend"' ~/.zshrc
