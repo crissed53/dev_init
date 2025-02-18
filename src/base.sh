@@ -173,8 +173,10 @@ install_langs() {
   GO_VER=${GO_VER:-"1.23.4"}
   GO_TAR_FN=go${GO_VER}.linux-amd64.tar.gz
   wget https://go.dev/dl/${GO_TAR_FN} && tar -C $LOCAL_DIR -xzf ${GO_TAR_FN}
-  add_if_not_exists 'export GOPATH=$PATH:'"$LOCAL_DIR"/go ~/.zshrc
-  add_if_not_exists 'export PATH=$PATH:$GOPATH/bin' ~/.zshrc
+  add_if_not_exists 'export _GOPATH='"$LOCAL_DIR"/go ~/.zshrc
+  add_if_not_exists 'export PATH=$PATH:$_GOPATH/bin' ~/.zshrc
+  add_if_not_exists 'export GOBIN=$_GOPATH/bin' ~/.zshrc
+
   popd
 }
 
