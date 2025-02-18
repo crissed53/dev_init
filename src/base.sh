@@ -42,22 +42,18 @@ install_zsh() {
     -p helm \
     -p https://github.com/zsh-users/zsh-autosuggestions \
     -p https://github.com/zsh-users/zsh-completions \
-    -p https://github.com/zsh-users/zsh-syntax-highlighting
+    -p https://github.com/zsh-users/zsh-syntax-highlighting \
+    -a 'export TZ="Asia/Seoul"' \
+    -a 'alias gauca="git add -u; git commit --amend"' \
+    -a 'alias gfrhu="git fetch; git reset --hard @{u}"' \
+    -a 'alias gaucapf="gauca; git push -f"' \
+    -a 'alias gaucm="git add -u; git commit -m"' \
+    -a 'export PATH='"$LOCAL_DIR"/bin':$PATH' \
+    -a 'export MANPATH='"$LOCAL_DIR"/share/man:'$MANPATH' \
+    -a 'export SHELL=$(which zsh)' \
+    -a 'if [[ -n "$TMUX" ]]; then export TERM="xterm-kitty"; fi'
+    
   chsh -s $(which zsh)
-}
-
-
-set_zsh_alias() {
-  add_if_not_exists 'export TZ="Asia/Seoul"' ~/.zshrc
-  add_if_not_exists 'alias gauca="git add -u; git commit --amend"' ~/.zshrc
-  add_if_not_exists 'alias gaucapf="gauca; git push -f"' ~/.zshrc
-  add_if_not_exists 'alias gfrhu="git fetch; git reset --hard @{u}"' ~/.zshrc
-  add_if_not_exists 'alias gaucm="git add -u; git commit -m"' ~/.zshrc
-  add_if_not_exists 'alias vi=nvim' ~/.zshrc
-  add_if_not_exists 'export PATH='"$LOCAL_DIR"/bin':$PATH' ~/.zshrc
-  add_if_not_exists 'export MANPATH='"$LOCAL_DIR"/share/man:'$MANPATH' ~/.zshrc
-  add_if_not_exists 'export SHELL=$(which zsh)' ~/.zshrc
-  add_if_not_exists 'if [[ -n "$TMUX" ]]; then export TERM="xterm-kitty"; fi' ~/.zshrc
 }
 
 install_tmuxrc() {
@@ -158,6 +154,7 @@ install_nvim() {
   cp -rf squashfs-root "$LOCAL_DIR"/
   ln -sf "$LOCAL_DIR"/squashfs-root/AppRun "$LOCAL_DIR"/bin/nvim
   popd || exit
+  add_if_not_exists 'alias vi=nvim' ~/.zshrc
   install_nvim_dotfile
 }
 
@@ -245,9 +242,6 @@ main() {
 
   echo "installing tmux..."
   install_tmux
-
-  echo "setting up zsh aliases... and rcs"
-  set_zsh_alias
 
   echo "install zsh..."
   install_zsh
