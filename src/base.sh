@@ -196,7 +196,7 @@ cargo install eza zoxide dua-cli
 add_if_not_exists 'alias ls="eza"' ~/.zshrc
 add_if_not_exists 'alias ll="eza -lh"' ~/.zshrc
 add_if_not_exists 'alias tree="eza --tree"' ~/.zshrc
-add_if_not_exists 'alias cd="zsh"' ~/.zshrc
+add_if_not_exists 'alias cd="z"' ~/.zshrc
 add_if_not_exists 'eval "$(zoxide init zsh)"' ~/.zshrc
 
 # install lazygit
