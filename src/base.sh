@@ -1,4 +1,4 @@
-LOCAL_DIR="${1:-$HOME/local}"
+LOCAL_DIR="${1:-$HOME/.local}"
 WORKSPACE_DIR="${2:-${PWD}/workspace}"
 PROJECT_DIR=${PWD}
 DOTFILES=$PROJECT_DIR/dotfiles
@@ -43,9 +43,9 @@ install_zsh() {
     -p https://github.com/zsh-users/zsh-autosuggestions \
     -p https://github.com/zsh-users/zsh-completions \
     -p https://github.com/zsh-users/zsh-syntax-highlighting
+  chsh -s $(which zsh)
 }
 
-chsh -s $(which zsh)
 
 set_zsh_alias() {
   add_if_not_exists 'export TZ="Asia/Seoul"' ~/.zshrc
@@ -176,7 +176,8 @@ install_langs() {
   GO_VER=${GO_VER:-"1.23.4"}
   GO_TAR_FN=go${GO_VER}.linux-amd64.tar.gz
   wget https://go.dev/dl/${GO_TAR_FN} && tar -C $LOCAL_DIR -xzf ${GO_TAR_FN}
-  add_if_not_exists 'export PATH=$PATH:'"$LOCAL_DIR"/go/bin ~/.zshrc
+  add_if_not_exists 'export GOPATH=$PATH:'"$LOCAL_DIR"/go ~/.zshrc
+  add_if_not_exists 'export PATH=$PATH:'"$GOPATH"/bin ~/.zshrc
   popd
 }
 
@@ -196,10 +197,13 @@ cargo install eza zoxide dua-cli
 add_if_not_exists 'alias ls="eza"' ~/.zshrc
 add_if_not_exists 'alias ll="eza -lh"' ~/.zshrc
 add_if_not_exists 'alias tree="eza --tree"' ~/.zshrc
+add_if_not_exists 'alias z="cd"' ~/.zshrc
 add_if_not_exists 'eval "$(zoxide init zsh)"' ~/.zshrc
 
 # install lazygit
 go install github.com/jesseduffield/lazygit@latest
+add_if_not_exists 'alias lg="lazygit"' ~/.zshrc
+
 EOF
 }
 
@@ -242,11 +246,11 @@ main() {
   echo "installing tmux..."
   install_tmux
 
-  echo "install zsh..."
-  install_zsh
-
   echo "setting up zsh aliases... and rcs"
   set_zsh_alias
+
+  echo "install zsh..."
+  install_zsh
 
   echo "setting up pure"
   install_pure
