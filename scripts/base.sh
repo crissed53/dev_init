@@ -204,15 +204,12 @@ install_plugins() {
   fi
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
   ~/.fzf/install --all
+}
 
-  # Wait for Rust to be available from install_langs
-  while ! command -v cargo &> /dev/null; do
-    echo "Waiting for Rust/Cargo to be available..."
-    # Source cargo env in case it was just installed
-    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
-    sleep 2
-  done
-
+install_rust_tools() {
+  # Source cargo env
+  [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+  
   # Install Rust-based tools
   cargo install eza zoxide dua-cli
   add_if_not_exists 'alias ls="eza"' ~/.zshrc
@@ -220,13 +217,9 @@ install_plugins() {
   add_if_not_exists 'alias tree="eza --tree"' ~/.zshrc
   add_if_not_exists 'alias cd="z"' ~/.zshrc
   add_if_not_exists 'eval "$(zoxide init zsh)"' ~/.zshrc
+}
 
-  # Wait for Go to be available from install_langs  
-  while ! command -v go &> /dev/null; do
-    echo "Waiting for Go to be available..."
-    sleep 2
-  done
-
+install_go_tools() {
   # Install Go-based tools
   go install github.com/jesseduffield/lazygit@latest
   add_if_not_exists 'alias lg="lazygit"' ~/.zshrc
@@ -360,9 +353,13 @@ main() {
   echo "=== Phase 2: Independent Components ==="
   run_parallel_group "Independent tools" "install_nvim" "install_docker"
 
-  # Phase 3: Parallel shell-dependent installations  
-  echo "=== Phase 3: Shell-dependent Components ==="
-  run_parallel_group "Languages and plugins" "install_langs" "install_plugins"
+  # Phase 3: Parallel language installations
+  echo "=== Phase 3: Language Runtimes ==="  
+  run_parallel_group "Language runtimes" "install_langs" "install_plugins"
+  
+  # Phase 4: Parallel tool installations (dependent on languages)
+  echo "=== Phase 4: Language-specific Tools ==="
+  run_parallel_group "Language tools" "install_rust_tools" "install_go_tools"
 
   echo "=== Setup Complete ==="
   rm -rf "$WORKSPACE_DIR"
