@@ -1,11 +1,10 @@
+source ../env.sh
+source utils.sh
+
 LOCAL_DIR="${1:-$HOME/.local}"
 WORKSPACE_DIR="${2:-${PWD}/workspace}"
 PROJECT_DIR=${PWD}
 DOTFILES=$PROJECT_DIR/dotfiles
-
-source utils.sh
-
-source ../env.sh
 
 if [ -d $WORKSPACE_DIR ]; then
   rm $WORKSPACE_DIR
