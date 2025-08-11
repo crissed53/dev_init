@@ -208,6 +208,8 @@ install_plugins() {
   # Wait for Rust to be available from install_langs
   while ! command -v cargo &> /dev/null; do
     echo "Waiting for Rust/Cargo to be available..."
+    # Source cargo env in case it was just installed
+    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
     sleep 2
   done
 
