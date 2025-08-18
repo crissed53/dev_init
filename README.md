@@ -45,15 +45,25 @@ dev_init/
 If you need to configure SSH for remote access:
 
 ```bash
-# Set up SSH directory permissions
-sudo chmod 700 ~/.ssh
-sudo chmod 600 ~/.ssh/authorized_keys
+# Change SSH port
+sudo sed -i '/^#\?Port /c\Port 33333' /etc/ssh/sshd_config
 
-# Configure SSH daemon (requires sudo)
-sudo sed -i 's/^#*Port .*/Port 33333/' /etc/ssh/sshd_config
-sudo sed -i 's/^#*PermitRootLogin .*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config  
-sudo sed -i 's/^#*PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
+# Root login only with keys
+sudo sed -i '/^#\?PermitRootLogin /c\PermitRootLogin prohibit-password' /etc/ssh/sshd_config
 
-# Restart SSH service
-sudo systemctl restart ssh
+# Disable password login
+sudo sed -i '/^#\?PasswordAuthentication /c\PasswordAuthentication no' /etc/ssh/sshd_config
+
+# Enable pubkey auth
+sudo sed -i '/^#\?PubkeyAuthentication /c\PubkeyAuthentication yes' /etc/ssh/sshd_config
+
+# Set authorized keys file
+sudo sed -i '/^#\?AuthorizedKeysFile /c\AuthorizedKeysFile .ssh/authorized_keys' /etc/ssh/sshd_config
+
+
+chmod 700 /root
+chmod 700 /root/.ssh
+chmod 600 /root/.ssh/authorized_keys
+chown -R root:root /root/.ssh
+
 ```
