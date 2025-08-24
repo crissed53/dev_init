@@ -3,7 +3,7 @@ source utils.sh
 
 LOCAL_DIR="${1:-$HOME/.local}"
 WORKSPACE_DIR="${2:-${PWD}/workspace}"
-PROJECT_DIR=${PWD}
+PROJECT_DIR=$(dirname ${PWD})
 DOTFILES=$PROJECT_DIR/config/dotfiles
 
 if [ -d $WORKSPACE_DIR ]; then
@@ -52,7 +52,7 @@ install_zsh() {
     -a 'export SHELL=$(which zsh)' \
     -a 'if [[ -n "$TMUX" ]]; then export TERM="xterm-kitty"; fi'
     
-  sudo chsh -s $(which zsh) $USER
+  sudo chsh -s "$(command -v zsh)" "${SUDO_USER:-$(id -un)}"
 }
 
 install_tmuxrc() {
@@ -135,7 +135,7 @@ install_nvim_dotfile() {
   if [ -d "$NVIM_CONFIG_DIR" ]; then
     rm -rf "$NVIM_CONFIG_DIR"
   fi
-  git clone https://github.com/crissed53/lazyvim.dotfile.git -b raw ~/.config/nvim
+  git clone https://github.com/crissed53/lazyvim.dotfile.git ~/.config/nvim
 
   zsh -c "source ~/.zshrc && nvim --headless '+Lazy install' +MasonInstallAll +qall"
 }
