@@ -47,6 +47,7 @@ install_zsh() {
     -a 'alias gfrhu="git fetch; git reset --hard @{u}"' \
     -a 'alias gaucapf="gauca; git push -f"' \
     -a 'alias gaucm="git add -u; git commit -m"' \
+    -a 'export EDITOR="nvim"' \
     -a 'export PATH='"$LOCAL_DIR"/bin':$PATH' \
     -a 'export MANPATH='"$LOCAL_DIR"/share/man:'$MANPATH' \
     -a 'export SHELL=$(which zsh)' \
